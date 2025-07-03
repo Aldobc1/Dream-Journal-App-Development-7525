@@ -2,20 +2,24 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { es, enUS } from 'date-fns/locale';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
 import { useDream } from '../context/DreamContext';
+import { useLanguage } from '../context/LanguageContext';
 import DreamCard from './DreamCard';
 
 const { FiPlus, FiSearch, FiFilter, FiTag, FiX } = FiIcons;
 
 const DreamList = () => {
   const { dreams } = useDream();
+  const { t, language } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [selectedTags, setSelectedTags] = useState([]);
   const [showTagFilter, setShowTagFilter] = useState(false);
+
+  const locale = language === 'es' ? es : enUS;
 
   // Obtener todas las etiquetas únicas
   const allTags = [...new Set(dreams.flatMap(dream => dream.tags || []))].sort();
@@ -61,10 +65,10 @@ const DreamList = () => {
         <div className="bg-white rounded-2xl shadow-xl p-12 max-w-md mx-auto">
           <div className="text-6xl mb-6">🌙</div>
           <h3 className="text-2xl font-bold text-gray-800 mb-4">
-            Comienza tu diario de sueños
+            {t('startDiary')}
           </h3>
           <p className="text-gray-600 mb-8">
-            Aún no has registrado ningún sueño. ¡Empieza a documentar tus aventuras nocturnas!
+            {t('noDreams')}
           </p>
           <Link to="/add">
             <motion.button
@@ -73,7 +77,7 @@ const DreamList = () => {
               className="bg-gradient-to-r from-dream-600 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold flex items-center space-x-2 mx-auto hover:from-dream-700 hover:to-purple-700 transition-all shadow-lg"
             >
               <SafeIcon icon={FiPlus} />
-              <span>Agregar Mi Primer Sueño</span>
+              <span>{t('addFirstDream')}</span>
             </motion.button>
           </Link>
         </div>
@@ -90,7 +94,7 @@ const DreamList = () => {
             <SafeIcon icon={FiSearch} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Buscar en tus sueños..."
+              placeholder={t('search')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dream-500 focus:border-transparent"
@@ -104,9 +108,9 @@ const DreamList = () => {
               onChange={(e) => setFilterType(e.target.value)}
               className="pl-10 pr-8 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dream-500 focus:border-transparent appearance-none bg-white min-w-[150px]"
             >
-              <option value="all">Todos</option>
-              <option value="lucid">Sueños Lúcidos</option>
-              <option value="normal">Sueños Normales</option>
+              <option value="all">{t('all')}</option>
+              <option value="lucid">{t('lucidDreams')}</option>
+              <option value="normal">{t('normalDreams')}</option>
             </select>
           </div>
 
@@ -121,7 +125,7 @@ const DreamList = () => {
             } border`}
           >
             <SafeIcon icon={FiTag} />
-            <span>Etiquetas</span>
+            <span>{t('tags')}</span>
             {selectedTags.length > 0 && (
               <span className="bg-dream-600 text-white text-xs px-2 py-1 rounded-full">
                 {selectedTags.length}
@@ -139,7 +143,7 @@ const DreamList = () => {
               exit={{ opacity: 0, height: 0 }}
               className="flex flex-wrap gap-2 pt-4 border-t border-gray-200"
             >
-              <span className="text-sm text-gray-600 font-medium">Filtros activos:</span>
+              <span className="text-sm text-gray-600 font-medium">{t('activeFilters')}</span>
               {selectedTags.map(tag => (
                 <motion.button
                   key={tag}
@@ -159,7 +163,7 @@ const DreamList = () => {
                 onClick={clearAllTags}
                 className="text-gray-500 hover:text-red-600 text-sm font-medium underline"
               >
-                Limpiar todos
+                {t('clearAll')}
               </motion.button>
             </motion.div>
           )}
@@ -178,10 +182,10 @@ const DreamList = () => {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-800 flex items-center space-x-2">
                 <SafeIcon icon={FiTag} className="text-dream-600" />
-                <span>Filtrar por Etiquetas</span>
+                <span>{t('filterByTags')}</span>
               </h3>
               <span className="text-sm text-gray-500">
-                {allTags.length} etiquetas disponibles
+                {allTags.length} {t('tagsAvailable')}
               </span>
             </div>
 
@@ -208,7 +212,7 @@ const DreamList = () => {
                           #{tag}
                         </div>
                         <div className="text-xs text-gray-500 mt-1">
-                          {count} sueño{count !== 1 ? 's' : ''}
+                          {count} {count !== 1 ? t('dreamsPlural') : t('dream')}
                         </div>
                       </div>
                     </motion.button>
@@ -218,8 +222,8 @@ const DreamList = () => {
             ) : (
               <div className="text-center py-8 text-gray-500">
                 <SafeIcon icon={FiTag} className="text-4xl mx-auto mb-2 opacity-50" />
-                <p>No hay etiquetas disponibles</p>
-                <p className="text-sm">Las etiquetas aparecerán cuando agregues sueños con etiquetas</p>
+                <p>{t('noTagsAvailable')}</p>
+                <p className="text-sm">{t('tagsWillAppear')}</p>
               </div>
             )}
           </motion.div>
@@ -235,7 +239,7 @@ const DreamList = () => {
         >
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-700">
-              Mostrando <span className="font-semibold text-dream-600">{filteredDreams.length}</span> de <span className="font-semibold">{dreams.length}</span> sueños
+              {t('showing')} <span className="font-semibold text-dream-600">{filteredDreams.length}</span> {t('of')} <span className="font-semibold">{dreams.length}</span> {t('dreams')}
             </span>
             <button
               onClick={() => {
@@ -245,7 +249,7 @@ const DreamList = () => {
               }}
               className="text-dream-600 hover:text-dream-700 font-medium underline"
             >
-              Limpiar filtros
+              {t('clearFilters')}
             </button>
           </div>
         </motion.div>
@@ -262,7 +266,7 @@ const DreamList = () => {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
             >
-              <DreamCard dream={dream} />
+              <DreamCard dream={dream} onTagClick={toggleTag} />
             </motion.div>
           ))}
         </AnimatePresence>
@@ -277,18 +281,18 @@ const DreamList = () => {
         >
           <div className="text-4xl mb-4">🔍</div>
           <h3 className="text-xl font-semibold text-gray-800 mb-2">
-            No se encontraron sueños
+            {t('noResults')}
           </h3>
           <p className="text-gray-600 mb-4">
-            Intenta ajustar los filtros o buscar con otros términos.
+            {t('adjustFilters')}
           </p>
           <div className="space-y-2 text-sm text-gray-500">
-            {searchTerm && <p>• Búsqueda: "{searchTerm}"</p>}
+            {searchTerm && <p>• {t('searchLabel')}: "{searchTerm}"</p>}
             {filterType !== 'all' && (
-              <p>• Tipo: {filterType === 'lucid' ? 'Sueños Lúcidos' : 'Sueños Normales'}</p>
+              <p>• {t('type')}: {filterType === 'lucid' ? t('lucidDreams') : t('normalDreams')}</p>
             )}
             {selectedTags.length > 0 && (
-              <p>• Etiquetas: {selectedTags.map(tag => `#${tag}`).join(', ')}</p>
+              <p>• {t('tags')}: {selectedTags.map(tag => `#${tag}`).join(', ')}</p>
             )}
           </div>
         </motion.div>

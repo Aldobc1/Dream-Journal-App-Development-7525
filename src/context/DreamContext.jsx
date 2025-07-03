@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useLanguage } from './LanguageContext';
 
 const DreamContext = createContext();
 
@@ -13,6 +14,7 @@ export const useDream = () => {
 export const DreamProvider = ({ children }) => {
   const [dreams, setDreams] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { t, language } = useLanguage();
 
   // Load dreams from localStorage on mount
   useEffect(() => {
@@ -42,13 +44,22 @@ export const DreamProvider = ({ children }) => {
   };
 
   const updateDream = (id, updates) => {
-    setDreams(prev => prev.map(dream => 
-      dream.id === id ? { ...dream, ...updates } : dream
-    ));
+    setDreams(prev => 
+      prev.map(dream => 
+        dream.id === id ? { ...dream, ...updates } : dream
+      )
+    );
   };
 
   const shareToFacebook = (dream) => {
-    const text = `Acabo de registrar un sueño ${dream.isLucid ? 'lúcido' : 'normal'} en mi Dream Diary:\n\n"${dream.content}"\n\n#DreamDiary #Sueños ${dream.isLucid ? '#SueñoLúcido' : ''}`;
+    const dreamType = dream.isLucid ? t('shareTextLucid') : t('shareTextNormal');
+    const lucidTag = dream.isLucid ? t('shareTagLucid') : '';
+    
+    const text = t('shareText')
+      .replace('{type}', dreamType)
+      .replace('{content}', dream.content)
+      .replace('{lucidTag}', lucidTag);
+
     const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(text)}`;
     window.open(url, '_blank', 'width=600,height=400');
   };

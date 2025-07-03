@@ -1,19 +1,23 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { es, enUS } from 'date-fns/locale';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
 import { useDream } from '../context/DreamContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const { FiMoon, FiSun, FiShare2, FiTrash2, FiCalendar, FiTag } = FiIcons;
 
 const DreamCard = ({ dream, onTagClick }) => {
   const { deleteDream, shareToFacebook } = useDream();
+  const { t, language } = useLanguage();
   const [showFullContent, setShowFullContent] = useState(false);
 
+  const locale = language === 'es' ? es : enUS;
+
   const handleDelete = () => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar este sueño?')) {
+    if (window.confirm(t('confirmDelete'))) {
       deleteDream(dream.id);
     }
   };
@@ -56,16 +60,16 @@ const DreamCard = ({ dream, onTagClick }) => {
             />
             <div>
               <h3 className="font-semibold text-lg text-gray-800">
-                {dream.title || 'Sueño sin título'}
+                {dream.title || t('untitledDream')}
               </h3>
               <div className="flex items-center space-x-4 text-sm text-gray-500">
                 <span className="flex items-center space-x-1">
                   <SafeIcon icon={FiCalendar} />
-                  <span>{format(new Date(dream.date), 'dd MMM yyyy', { locale: es })}</span>
+                  <span>{format(new Date(dream.date), 'dd MMM yyyy', { locale })}</span>
                 </span>
                 <span className="flex items-center space-x-1">
                   <span>{moodEmojis[dream.mood] || '😐'}</span>
-                  <span className="capitalize">{dream.mood}</span>
+                  <span className="capitalize">{t(dream.mood)}</span>
                 </span>
               </div>
             </div>
@@ -74,7 +78,7 @@ const DreamCard = ({ dream, onTagClick }) => {
           <div className="flex items-center space-x-2">
             {dream.isLucid && (
               <span className="bg-dream-100 text-dream-700 px-3 py-1 rounded-full text-sm font-medium">
-                Lúcido
+                {t('lucid')}
               </span>
             )}
             <motion.button
@@ -82,7 +86,7 @@ const DreamCard = ({ dream, onTagClick }) => {
               whileTap={{ scale: 0.9 }}
               onClick={handleShare}
               className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-              title="Compartir en Facebook"
+              title={t('shareOnFacebook')}
             >
               <SafeIcon icon={FiShare2} />
             </motion.button>
@@ -91,7 +95,7 @@ const DreamCard = ({ dream, onTagClick }) => {
               whileTap={{ scale: 0.9 }}
               onClick={handleDelete}
               className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-              title="Eliminar sueño"
+              title={t('deleteDream')}
             >
               <SafeIcon icon={FiTrash2} />
             </motion.button>
@@ -107,7 +111,7 @@ const DreamCard = ({ dream, onTagClick }) => {
               onClick={() => setShowFullContent(!showFullContent)}
               className="text-dream-600 hover:text-dream-700 font-medium mt-2 text-sm"
             >
-              {showFullContent ? 'Ver menos' : 'Ver más'}
+              {showFullContent ? t('readLess') : t('readMore')}
             </button>
           )}
         </div>

@@ -3,11 +3,13 @@ import { motion } from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
 import { useDream } from '../context/DreamContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const { FiTag } = FiIcons;
 
 const TagCloud = ({ onTagClick, selectedTags = [] }) => {
   const { dreams } = useDream();
+  const { t } = useLanguage();
 
   // Calcular la frecuencia de cada etiqueta
   const tagFrequency = dreams.reduce((acc, dream) => {
@@ -29,11 +31,11 @@ const TagCloud = ({ onTagClick, selectedTags = [] }) => {
       <div className="bg-white rounded-xl p-6 shadow-lg">
         <div className="flex items-center space-x-2 mb-4">
           <SafeIcon icon={FiTag} className="text-dream-600" />
-          <h3 className="text-lg font-semibold text-gray-800">Nube de Etiquetas</h3>
+          <h3 className="text-lg font-semibold text-gray-800">{t('tagCloud')}</h3>
         </div>
         <div className="text-center py-8 text-gray-500">
           <SafeIcon icon={FiTag} className="text-4xl mx-auto mb-2 opacity-50" />
-          <p>No hay etiquetas disponibles</p>
+          <p>{t('noTagsAvailable')}</p>
         </div>
       </div>
     );
@@ -67,10 +69,10 @@ const TagCloud = ({ onTagClick, selectedTags = [] }) => {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
           <SafeIcon icon={FiTag} className="text-dream-600" />
-          <h3 className="text-lg font-semibold text-gray-800">Nube de Etiquetas</h3>
+          <h3 className="text-lg font-semibold text-gray-800">{t('tagCloud')}</h3>
         </div>
         <span className="text-sm text-gray-500">
-          {sortedTags.length} etiquetas
+          {sortedTags.length} {t('tags')}
         </span>
       </div>
 
@@ -92,7 +94,7 @@ const TagCloud = ({ onTagClick, selectedTags = [] }) => {
                   ? 'bg-dream-100 text-dream-700 border-2 border-dream-300'
                   : 'hover:bg-dream-50 border-2 border-transparent'
               } ${getFontSize(frequency)} ${getColor(frequency)}`}
-              title={`${frequency} sueño${frequency !== 1 ? 's' : ''}`}
+              title={`${frequency} ${frequency !== 1 ? t('dreamsPlural') : t('dream')}`}
             >
               #{tag}
             </motion.button>

@@ -4,12 +4,15 @@ import { motion } from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
 import { useDream } from '../context/DreamContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const { FiSave, FiMoon, FiSun, FiCalendar } = FiIcons;
 
 const DreamForm = () => {
   const navigate = useNavigate();
   const { addDream } = useDream();
+  const { t } = useLanguage();
+  
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -41,12 +44,12 @@ const DreamForm = () => {
   };
 
   const moods = [
-    { value: 'happy', label: '😊 Feliz', color: 'text-green-600' },
-    { value: 'neutral', label: '😐 Neutral', color: 'text-gray-600' },
-    { value: 'sad', label: '😢 Triste', color: 'text-blue-600' },
-    { value: 'excited', label: '🤩 Emocionado', color: 'text-yellow-600' },
-    { value: 'scared', label: '😰 Asustado', color: 'text-red-600' },
-    { value: 'confused', label: '😵 Confundido', color: 'text-purple-600' },
+    { value: 'happy', label: `😊 ${t('happy')}`, color: 'text-green-600' },
+    { value: 'neutral', label: `😐 ${t('neutral')}`, color: 'text-gray-600' },
+    { value: 'sad', label: `😢 ${t('sad')}`, color: 'text-blue-600' },
+    { value: 'excited', label: `🤩 ${t('excited')}`, color: 'text-yellow-600' },
+    { value: 'scared', label: `😰 ${t('scared')}`, color: 'text-red-600' },
+    { value: 'confused', label: `😵 ${t('confused')}`, color: 'text-purple-600' },
   ];
 
   return (
@@ -59,7 +62,7 @@ const DreamForm = () => {
       >
         <div className="flex items-center space-x-3 mb-8">
           <SafeIcon icon={FiMoon} className="text-3xl text-dream-600" />
-          <h2 className="text-3xl font-bold text-gray-800">Registrar Sueño</h2>
+          <h2 className="text-3xl font-bold text-gray-800">{t('registerDream')}</h2>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -67,7 +70,7 @@ const DreamForm = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <SafeIcon icon={FiCalendar} className="inline mr-2" />
-                Fecha
+                {t('date')}
               </label>
               <input
                 type="date"
@@ -80,14 +83,14 @@ const DreamForm = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Título (opcional)
+                {t('title')}
               </label>
               <input
                 type="text"
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
-                placeholder="Dale un título a tu sueño..."
+                placeholder={t('titlePlaceholder')}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dream-500 focus:border-transparent transition-all"
               />
             </div>
@@ -95,7 +98,7 @@ const DreamForm = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Descripción del sueño *
+              {t('description')} *
             </label>
             <textarea
               name="content"
@@ -103,7 +106,7 @@ const DreamForm = () => {
               onChange={handleChange}
               required
               rows={6}
-              placeholder="Describe tu sueño con todo el detalle que puedas recordar..."
+              placeholder={t('descriptionPlaceholder')}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dream-500 focus:border-transparent transition-all resize-none"
             />
           </div>
@@ -117,13 +120,10 @@ const DreamForm = () => {
                 />
                 <div>
                   <h3 className="font-semibold text-gray-800">
-                    {formData.isLucid ? 'Sueño Lúcido' : 'Sueño Normal'}
+                    {formData.isLucid ? t('lucidDream') : t('normalDream')}
                   </h3>
                   <p className="text-sm text-gray-600">
-                    {formData.isLucid 
-                      ? 'Eras consciente de que estabas soñando'
-                      : 'No eras consciente de que estabas soñando'
-                    }
+                    {formData.isLucid ? t('lucidDescription') : t('normalDescription')}
                   </p>
                 </div>
               </div>
@@ -142,7 +142,7 @@ const DreamForm = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              Estado de ánimo en el sueño
+              {t('mood')}
             </label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {moods.map((mood) => (
@@ -167,14 +167,14 @@ const DreamForm = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Etiquetas (separadas por comas)
+              {t('tags')}
             </label>
             <input
               type="text"
               name="tags"
               value={formData.tags}
               onChange={handleChange}
-              placeholder="pesadilla, volar, familia, trabajo..."
+              placeholder={t('tagsPlaceholder')}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dream-500 focus:border-transparent transition-all"
             />
           </div>
@@ -186,7 +186,7 @@ const DreamForm = () => {
             className="w-full bg-gradient-to-r from-dream-600 to-purple-600 text-white py-4 px-6 rounded-lg font-semibold flex items-center justify-center space-x-2 hover:from-dream-700 hover:to-purple-700 transition-all shadow-lg"
           >
             <SafeIcon icon={FiSave} className="text-lg" />
-            <span>Guardar Sueño</span>
+            <span>{t('saveDream')}</span>
           </motion.button>
         </form>
       </motion.div>
